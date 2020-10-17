@@ -1,6 +1,6 @@
 ---
 # defaults file for bootstrap
-apt_libs:
+apt_libraries:
   - pyhton3
   - python3-distutils
   - git

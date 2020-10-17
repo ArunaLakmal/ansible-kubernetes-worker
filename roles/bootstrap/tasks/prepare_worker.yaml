@@ -1,0 +1,5 @@
+- name: Install required libraries
+  apt:
+    name: '{{ apt_libraries }}'
+    state: present
+  register: status
