@@ -1,7 +1,7 @@
 ---
 # defaults file for bootstrap
 apt_libraries:
-  - pyhton3
+  - python3
   - python3-distutils
   - git
   - jq
