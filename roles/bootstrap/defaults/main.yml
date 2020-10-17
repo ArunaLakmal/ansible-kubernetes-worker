@@ -1,7 +1,5 @@
 ---
 # defaults file for bootstrap
----
-# defaults file for init_worker
 apt_libs:
   - pyhton3
   - python3-distutils
