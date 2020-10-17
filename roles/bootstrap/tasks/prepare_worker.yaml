@@ -4,7 +4,19 @@
     state: present
   register: status
 
+- name: installing pip for python package management
+  shell: "python3 {{ role_path }}/files/get-pip.py"
+
 - name: Install required pip libraries
   pip:
     name: '{{ pip_packages }}'
     state: present
+
+- name: create directory if they don't exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+  loop: "{{ directories }}"

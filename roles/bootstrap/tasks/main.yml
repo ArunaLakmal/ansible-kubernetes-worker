@@ -1,4 +1,4 @@
 ---
 # tasks file for bootstrap
-#- import_tasks: download.yaml
+- import_tasks: download.yaml
 - import_tasks: prepare_worker.yaml

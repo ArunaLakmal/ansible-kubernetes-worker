@@ -3,22 +3,3 @@
     url: "{{ item }}"
     dest: "{{ role_path}}/files"
   loop: "{{ package_urls }}"
-
-- name: installing pip for python package management
-  shell: "{{ role_path }}/files/get-pip.py"
-
-- name: create directory if they don't exist
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: root
-    group: root
-    mode: 0775
-  loop:
-    - /etc/cni/net.d
-    - /opt/cni/bin
-    - /var/lib/kubelet
-    - /var/lib/kube-proxy
-    - /var/lib/kubernetes
-    - /var/run/kubernetes
-    - "{{ role_path}}/files/containerd"
