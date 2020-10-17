@@ -54,5 +54,5 @@
 
 - name: copy containerd binaries 
   copy:
-    src: "{{ role_path }}/files/containerd/bin/*"
+    src: "{{ role_path }}/files/containerd/bin/"
     dest: /bin/
