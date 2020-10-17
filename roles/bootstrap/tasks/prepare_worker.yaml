@@ -3,3 +3,8 @@
     name: '{{ apt_libraries }}'
     state: present
   register: status
+
+- name: Install required libraries
+  pip:
+    name: '{{ pip_packages }}'
+    state: present
