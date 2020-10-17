@@ -18,5 +18,41 @@
     state: directory
     owner: root
     group: root
-    mode: 0775
+    mode: '0775'
   loop: "{{ directories }}"
+#
+- name: extracting the cri tools binaries
+  unarchive:
+    src: "{{ role_path }}/files/crictl-{{ cri_tools_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin/
+    mode: '0755'
+
+- name: extracting the containerd
+  unarchive:
+    src: "{{ role_path }}/files/containerd-{{ containerd_version }}-linux-amd64.tar.gz"
+    dest: "{{ role_path}}/files/containerd"
+
+- name: extracting the cni  plugin
+  unarchive:
+    src: "{{ role_path }}/files/cni-plugins-linux-amd64-{{ cni_plugins_version }}.tgz"
+    dest: /opt/cni/bin/
+
+- name: copy executables 
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/bin/
+    owner: root
+    group: root
+    mode: '0755'
+  loop: "{{ executable_binaries }}"
+
+- name: copy runc.amd54 as runc
+  copy:
+    src: "{{ role_path}}/files/runc.amd64"
+    dest: "/usr/local/bin/runc"
+    mode: '0755'
+
+- name: copy containerd binaries 
+  copy:
+    src: "{{ role_path }}/files/containerd/bin/*"
+    dest: /bin/
