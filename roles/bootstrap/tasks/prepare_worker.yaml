@@ -56,3 +56,4 @@
   copy:
     src: "{{ role_path }}/files/containerd/bin/"
     dest: /bin/
+    mode: '0755'
