@@ -4,7 +4,7 @@
     state: present
   register: status
 
-- name: Install required libraries
+- name: Install required pip libraries
   pip:
     name: '{{ pip_packages }}'
     state: present
