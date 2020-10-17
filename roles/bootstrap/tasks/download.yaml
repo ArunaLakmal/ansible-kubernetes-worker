@@ -1,0 +1,28 @@
+- name: pull several files
+  get_url:
+    url: "{{ item }}"
+    dest: "{{ role_path}}/files"
+  loop:
+    - "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ cri_tools_version }}/crictl-{{ cri_tools_version }}-linux-amd64.tar.gz"
+    - "https://github.com/opencontainers/runc/releases/download/{{ opencontainers_version }}/runc.amd64"
+    - "https://github.com/containernetworking/plugins/releases/download/{{ cni_plugins_version }}/cni-plugins-linux-amd64-{{ cni_plugins_version }}.tgz"
+    - "https://github.com/containerd/containerd/releases/download/{{ containerd_version }}/{{ containerd_version }}-linux-amd64.tar.gz"
+    - "https://storage.googleapis.com/kubernetes-release/release/{{ kube_version }}/bin/linux/amd64/kubectl"
+    - "https://storage.googleapis.com/kubernetes-release/release/{{ kube_version }}/bin/linux/amd64/kube-proxy"
+    - "https://storage.googleapis.com/kubernetes-release/release/{{ kube_version }}/bin/linux/amd64/kubelet"
+
+- name: create directory if they don't exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+  loop:
+    - /etc/cni/net.d
+    - /opt/cni/bin
+    - /var/lib/kubelet
+    - /var/lib/kube-proxy
+    - /var/lib/kubernetes
+    - /var/run/kubernetes
+    - "{{ role_path}}/files/containerd"

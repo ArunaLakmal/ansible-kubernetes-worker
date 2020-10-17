@@ -1,0 +1,25 @@
+---
+# defaults file for bootstrap
+---
+# defaults file for init_worker
+apt_libs:
+  - pyhton3
+  - python3-distutils
+  - git
+  - jq
+  - make
+pip_packages:
+  - botocore
+  - boto
+  - boto3
+  - awscli
+ansible_galaxy_plugin: community.aws
+cfssl_version: R1.2
+cfssl_linux: cfssl_linux-amd64
+cfssl_json: cfssljson_linux-amd64
+cfssl_cert_info: cfssl-certinfo_linux-amd64
+kube_version: v1.18.9
+cri_tools_version: v1.18.0
+opencontainers_version: v1.0.0-rc91
+cni_plugins_version: v0.8.6
+containerd_version: v1.3.6
