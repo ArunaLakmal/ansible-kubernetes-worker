@@ -20,6 +20,24 @@
     group: root
     mode: '0775'
   loop: "{{ directories }}"
+
+- name: executable cfssl_linux-amd64
+  copy:
+    src: "{{ role_path}}/files/cfssl_linux-amd64"
+    dest: "/bin/cfssl"
+    mode: '0755'
+
+- name: executable cfssljson_linux-amd64
+  copy:
+    src: "{{ role_path}}/files/cfssljson_linux-amd64"
+    dest: "/bin/cfssljson"
+    mode: '0755'
+
+- name: executable cfssl-certinfo_linux-amd64
+  copy:
+    src: "{{ role_path}}/files/cfssl-certinfo_linux-amd64"
+    dest: "/bin/cfssl-certinfo"
+    mode: '0755'
 #
 - name: extracting the cri tools binaries
   unarchive:
