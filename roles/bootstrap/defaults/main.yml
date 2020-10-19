@@ -41,6 +41,7 @@ directories:
   - /var/lib/kubernetes
   - /var/run/kubernetes
   - "{{ role_path}}/files/containerd"
+  - "/etc/containerd/"
 executable_binaries:
   - "{{ role_path}}/files/kubectl"
   - "{{ role_path}}/files/kube-proxy"

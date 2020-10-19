@@ -1,2 +1,6 @@
 ---
 # defaults file for workers
+services:
+  - containerd
+  - kubelet
+  - kube-proxy

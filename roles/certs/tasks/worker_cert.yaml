@@ -19,34 +19,6 @@
     dest: "{{ role_path }}/files/ca-config.json"
     mode: get
 
-- name: kube worker hostname
-  shell: curl http://169.254.169.254/latest/meta-data/local-hostname
-  register: worker_host
-
-- set_fact: 
-    worker_host={{ worker_host.stdout }}
-
-- name: kube worker ip address
-  shell: curl http://169.254.169.254/latest/meta-data/local-ipv4
-  register: worker_ip
-
-- set_fact: 
-    worker_ip={{ worker_ip.stdout }}
-
-- name: kube worker loadbalancer
-  shell: aws elbv2 describe-load-balancers --region us-east-1 --name kubeworker-int-lb | jq -r '.LoadBalancers[].DNSName'
-  register: worker_lb
-
-- set_fact: 
-    worker_lb={{ worker_lb.stdout }}
-
-- name: kube master loadbalancer
-  shell: aws elbv2 describe-load-balancers --region us-east-1 --name kubemaster-int-lb | jq -r '.LoadBalancers[].DNSName'
-  register: master_lb
-
-- set_fact: 
-    master_lb={{ master_lb.stdout }}
-
 - name: generate kube worker csr
   template:
     src: "{{ role_path }}/templates/worker-csr.json.j2"
@@ -68,3 +40,89 @@
     kubectl config set-credentials system:kube-proxy --client-certificate={{ role_path }}/files/kube-proxy.pem --client-key={{ role_path }}/files/kube-proxy-key.pem --embed-certs=true --kubeconfig={{ role_path }}/files/kube-proxy.kubeconfig
     kubectl config set-context default --cluster=kubernetes-the-hard-way --user=system:kube-proxy --kubeconfig={{ role_path }}/files/kube-proxy.kubeconfig
     kubectl config use-context default --kubeconfig={{ role_path }}/files/kube-proxy.kubeconfig
+
+- name: "{{ worker_host }}-key cert"
+  copy:
+    src: "{{ role_path }}/files/{{ worker_host }}-key.pem"
+    dest: /var/lib/kubelet/
+    mode: '0755'
+
+- name: "{{ worker_host }} cert"
+  copy:
+    src: "{{ role_path }}/files/{{ worker_host }}.pem"
+    dest: /var/lib/kubelet/
+    mode: '0755'
+
+- name: "{{ worker_host }}.kubeconfig"
+  copy:
+    src: "{{ role_path }}/files/{{ worker_host }}.kubeconfig"
+    dest: /var/lib/kubelet/kubeconfig
+    mode: '0755'
+
+- name: root ca 
+  copy:
+    src: "{{ role_path }}/files/ca.pem"
+    dest: /var/lib/kubernetes/
+
+- name: kube-proxy 
+  copy:
+    src: "{{ role_path }}/files/kube-proxy.kubeconfig"
+    dest: /var/lib/kube-proxy/kubeconfig
+    mode: '0755'
+
+- name: bridge network
+  template:
+    src: "{{ role_path }}/templates/10-bridge.conf.j2"
+    dest: "/etc/cni/net.d/10-bridge.conf"
+
+- name: loop back network
+  template:
+    src: "{{ role_path }}/templates/99-loopback.conf.j2"
+    dest: "/etc/cni/net.d/99-loopback.conf"
+
+- name: containerd configuration
+  template:
+    src: "{{ role_path }}/templates/config.toml.j2"
+    dest: "/etc/containerd/config.toml"
+
+- name: containerd service setup
+  template:
+    src: "{{ role_path }}/templates/containerd.service.j2"
+    dest: "/etc/systemd/system/containerd.service"
+
+- name: kubelet configuration
+  template: 
+    src: "{{ role_path }}/templates/kubelet-config.yaml.j2"
+    dest: "/var/lib/kubelet/kubelet-config.yaml"
+
+- name: kubelet service configuration
+  template:
+    src: "{{ role_path }}/templates/kubelet.service.j2"
+    dest: "/etc/systemd/system/kubelet.service"
+
+- name: kube proxy configuration 
+  template:
+    src: "{{ role_path }}/templates/kube-proxy-config.yaml.j2"
+    dest: "/var/lib/kube-proxy/kube-proxy-config.yaml"
+
+- name: kube proxy service 
+  template:
+    src: "{{ role_path }}/templates/kube-proxy.service.j2"
+    dest: "/etc/systemd/system/kube-proxy.service"
+
+- name: systemd reload
+  systemd:
+    daemon_reload: yes
+
+- name: enable services and ensure not masked
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    masked: no
+  loop: "{{ services }}"
+
+- name: run services
+  systemd:
+    state: started
+    name: "{{ item }}"
+  loop: "{{ services }}"
