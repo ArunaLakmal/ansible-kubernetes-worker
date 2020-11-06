@@ -70,11 +70,15 @@
     dest: /var/lib/kube-proxy/kubeconfig
     mode: '0755'
 
+#This option is disabled as we do not plan to use the CNI bridge network as per the 
+#Kuberenetes Hardway guide
 #- name: bridge network
 #  template:
 #    src: "{{ role_path }}/templates/10-bridge.conf.j2"
 #    dest: "/etc/cni/net.d/10-bridge.conf"
 
+#This option is disabled as we do not plan to use the CNI bridge network as per the 
+#Kuberenetes Hardway guide
 #- name: loop back network
 #  template:
 #    src: "{{ role_path }}/templates/99-loopback.conf.j2"
